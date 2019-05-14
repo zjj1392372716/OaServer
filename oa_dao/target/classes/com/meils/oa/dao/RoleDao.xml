@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper用于映射我们的Dao操作-->
+<mapper namespace="com.meils.oa.dao.RoleDao">
+
+    <!--结果Map集-->
+    <resultMap id="roleResult" type="Role">
+        <id property="roleId" column="roleId" javaType="Integer"/>
+        <result property="roleName" column="roleName" javaType="String"/>
+        <result property="weight" column="weight" javaType="Integer"/>
+        <result property="isDelete" column="isDelete" javaType="Integer"/>
+    </resultMap>
+
+    <!--添加一个-->
+    <insert id="insert" parameterType="Role">
+       insert into role (roleName, weight) values(#{roleName},#{weight})
+    </insert>
+
+    <!--更新-->
+    <update id="update" parameterType="Role">
+        update role set roleName=#{roleName},weight=#{weight} where roleId=#{roleId}
+    </update>
+
+    <!--更新状态-->
+    <update id="updateState" parameterType="Role">
+        update role set isDelete = #{isDelete} where roleId=#{roleId}
+    </update>
+
+
+    <!--查找某一个-->
+    <select id="findOne" parameterType="Integer" resultMap="roleResult">
+        select * from role where roleId=#{id}
+    </select>
+
+    <!--分页查找-->
+    <select id="selectList" parameterType="map" resultMap="roleResult">
+        select * from role where roleId != 1 limit #{currIndex} , #{pageSize}
+    </select>
+
+</mapper>

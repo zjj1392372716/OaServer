@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper用于映射我们的Dao操作-->
+<mapper namespace="com.meils.oa.dao.StudentDao">
+
+    <!--结果Map集-->
+    <resultMap id="studentResult" type="Student">
+        <id property="sId" column="sId" javaType="Integer"/>
+        <result property="sName" column="sName" javaType="String"/>
+        <result property="sNum" column="sNum" javaType="String"/>
+        <result property="sAge" column="sAge" javaType="Integer"/>
+        <result property="startTime" column="startTime" javaType="String"/>
+        <result property="createTime" column="createTime" javaType="String"/>
+        <result property="classId" column="classId" javaType="Integer"/>
+        <result property="isDelete" column="isDelete" javaType="Integer"/>
+        <association property="classN" column="classId" javaType="ClassN" >
+            <id property="classId" column="classId" javaType="Integer"/>
+            <result property="className" column="className" javaType="String"/>
+        </association>
+    </resultMap>
+
+    <!--添加一个-->
+    <insert id="insert" parameterType="Student">
+       insert into student (sName,classId,sNum, sAge, startTime, createTime) values(#{sName}, #{classId}, #{sNum}, #{sAge}, #{startTime}, #{createTime})
+    </insert>
+
+
+    <!--更新-->
+    <update id="update" parameterType="Student">
+        update student set sName = #{sName},classId = #{classId},sNum = #{sNum}, sAge = #{sAge}, startTime = #{startTime}  where sId=#{sId}
+    </update>
+
+    <!--更新状态-->
+    <update id="updateState" parameterType="Student">
+        update student set isDelete = #{isDelete} where sId=#{sId}
+    </update>
+
+
+    <!--查找某一个-->
+    <select id="findOne" parameterType="Integer" resultMap="studentResult">
+        select s.*, c.classId, c.className from student s left join class c on s.classId = c.classId where sId=#{id}
+    </select>
+
+    <!--通过学号查找信息-->
+    <select id="findOneByNum" parameterType="String" resultMap="studentResult">
+        select s.*, c.className from student s left join class c on s.classId = c.classId where sNum=#{num}
+    </select>
+
+    <!--总数-->
+    <select id="selectNums" resultType="java.lang.Integer">
+        select count(*) from student
+     </select>
+
+    <select id="getTotal" resultType="Integer">
+       select count(*) from  student
+    </select>
+
+
+    <!--分页查找-->
+    <select id="selectList" parameterType="map" resultMap="studentResult">
+        select s.*, c.classId, c.className from student s left join class c on s.classId = c.classId order by createTime desc limit #{currIndex} , #{pageSize}
+    </select>
+
+
+</mapper>

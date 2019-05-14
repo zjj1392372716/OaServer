@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper用于映射我们的Dao操作-->
+<mapper namespace="com.meils.oa.dao.AdminDao">
+
+    <!--结果Map集-->
+    <resultMap id="roleResult" type="Admin">
+        <id property="adminId" column="adminId" javaType="Integer"/>
+        <result property="username" column="username" javaType="String"/>
+        <result property="token" column="token" javaType="String"/>
+        <result property="createTime" column="createTime" javaType="String"/>
+        <result property="roleId" column="roleId" javaType="Integer" />
+        <result property="status" column="status" javaType="Integer"/>
+        <association property="role" column="roleId" javaType="Role" >
+            <id property="roleId" column="roleId" javaType="Integer"/>
+            <result property="roleName" column="roleName" javaType="String"/>
+        </association>
+    </resultMap>
+
+    <!--查找某一个-->
+    <select id="findOne" parameterType="Admin" resultMap="roleResult">
+        select a.*, r.roleName, r.weight from admin a left join role r on a.roleId = r.roleId
+        where a.username=#{username} and a.token=#{token}
+    </select>
+    <!--添加一个-->
+    <insert id="insert" parameterType="Admin">
+       insert into admin (username, token, createTime, roleId) values(#{username},#{token}, #{createTime}, #{roleId})
+    </insert>
+
+
+
+</mapper>

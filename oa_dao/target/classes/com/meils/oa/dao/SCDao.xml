@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper用于映射我们的Dao操作-->
+<mapper namespace="com.meils.oa.dao.SCDao">
+
+    <!--结果Map集-->
+    <resultMap id="scResult" type="SC">
+        <id property="scId" column="scId" javaType="Integer"/>
+        <result property="sId" column="sId" javaType="Integer"/>
+        <result property="courseId" column="courseId" javaType="Integer"/>
+        <result property="createTime" column="createTime" javaType="String"/>
+        <result property="tName" column="tName" javaType="String"/>
+        <result property="sName" column="sName" javaType="String"/>
+        <result property="sNum" column="sNum" javaType="String"/>
+        <association property="course" column="courseId" javaType="Course" >
+            <id property="courseId" column="courseId" javaType="Integer"/>
+            <result property="courseName" column="courseName" javaType="String"/>
+            <result property="courseNum" column="courseNum" javaType="String"/>
+            <result property="createTime" column="createTime" javaType="String"/>
+            <result property="courseProperty" column="courseProperty" javaType="String"/>
+            <result property="courseSort" column="courseSort" javaType="String"/>
+            <result property="examType" column="examType" javaType="String"/>
+            <result property="studyType" column="studyType" javaType="String"/>
+            <result property="weeklyTimes" column="weeklyTimes" javaType="String"/>
+            <result property="tId" column="tId" javaType="Integer"/>
+        </association>
+    </resultMap>
+
+    <!--添加一个-->
+    <insert id="insert" parameterType="SC">
+       insert into sc ( courseId,sId,createTime ) values(#{courseId}, #{sId}, #{createTime})
+    </insert>
+
+
+    <select id="findOne" parameterType="SC" resultMap="scResult">
+      select scId from sc where sId=#{sId} and courseId = #{courseId}
+    </select>
+
+
+    <!--总数-->
+    <select id="selectNums" parameterType="Integer" resultType="java.lang.Integer">
+        select count(*) from sc where sId = #{sId}
+     </select>
+
+
+    <!--分页查找-->
+    <select id="selectList" parameterType="map" resultMap="scResult">
+    select  temp.*, t.tName from (select sc1.scId, sc1.sId , c.* from sc sc1 left join course c on sc1.courseId = c.courseId)
+     temp left join teacher t on temp.tId = t.tId  where sId = #{sId}  limit #{currIndex} , #{pageSize}
+    </select>
+
+    <!--非分页查找-->
+    <select id="selectList1" parameterType="Integer" resultMap="scResult">
+      select  courseId from sc  where sId = #{sId}
+    </select>
+
+
+    <!--查询某个教师的选课学生列表-->
+    <select id="selectList2"  parameterType="map" resultMap="scResult">
+      select temp1.*, c.courseName from (select  temp.*, s.sName, s.sNum from
+      (select * from sc where courseId in
+        <foreach collection="idList" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+      ) temp left join student s on temp.sId = s.sId) temp1
+      left join course c on temp1.courseId = c.courseId limit #{currIndex} , #{pageSize}
+    </select>
+
+    <!--查询全部-->
+    <select id="selectList3"  parameterType="map" resultType="java.lang.Integer">
+        select count(*) from (select  temp.*, s.sName, s.sNum from
+        (select * from sc where courseId in
+        <foreach collection="idList" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        ) temp left join student s on temp.sId = s.sId) temp1
+        left join course c on temp1.courseId = c.courseId
+    </select>
+
+
+    <delete id="delete" parameterType="Integer">
+        delete FROM sc WHERE scId=#{scId};
+    </delete>
+
+
+
+</mapper>

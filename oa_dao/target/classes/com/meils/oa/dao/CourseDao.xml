@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper用于映射我们的Dao操作-->
+<mapper namespace="com.meils.oa.dao.CourseDao">
+
+    <!--结果Map集-->
+    <resultMap id="courseResult" type="Course">
+        <id property="courseId" column="courseId" javaType="Integer"/>
+        <result property="courseName" column="courseName" javaType="String"/>
+        <result property="courseNum" column="courseNum" javaType="String"/>
+        <result property="createTime" column="createTime" javaType="String"/>
+        <result property="courseProperty" column="courseProperty" javaType="String"/>
+        <result property="courseSort" column="courseSort" javaType="String"/>
+        <result property="examType" column="examType" javaType="String"/>
+        <result property="studyType" column="studyType" javaType="String"/>
+        <result property="weeklyTimes" column="weeklyTimes" javaType="String"/>
+        <result property="tId" column="tId" javaType="Integer"/>
+        <association property="teacher" column="tId" javaType="Teacher" >
+            <id property="tId" column="tId" javaType="Integer"/>
+            <result property="tName" column="tName" javaType="String"/>
+        </association>
+    </resultMap>
+
+    <!--private Integer courseId;-->
+    <!--private String courseName;-->
+    <!--private String courseNum;-->
+    <!--private Integer tId;-->
+    <!--private Integer cId;-->
+    <!--private String createTime;-->
+    <!--private String courseProperty;-->
+    <!--private String courseSort;-->
+    <!--private String examType;-->
+    <!--private String studyType;-->
+    <!--private String weeklyTimes;-->
+
+    <!--添加一个-->
+    <insert id="insert" parameterType="Course">
+       insert into course (courseName,createTime, courseNum,courseProperty, courseSort, examType, studyType, weeklyTimes) values(#{courseName},#{createTime}, #{courseNum}, #{courseProperty}, #{courseSort}, #{examType}, #{studyType}, #{weeklyTimes})
+    </insert>
+
+
+    <!--更新-->
+    <update id="update" parameterType="Course">
+        update course set courseName = #{courseName},createTime = #{createTime},courseProperty = #{courseProperty}, courseSort = #{courseSort}, examType = #{examType}, studyType = #{studyType}, weeklyTimes = #{weeklyTimes} where courseId=#{courseId}
+    </update>
+
+
+
+    <!--更新,选择任课教师-->
+    <update id="updateTeacher" parameterType="Course">
+        update course set tId = #{tId} where courseNum=#{courseNum}
+    </update>
+
+
+    <select id="findOneByNum" parameterType="Course" resultMap="courseResult">
+        select * from course where courseNum = #{courseNum}
+    </select>
+
+
+    <select id="findByTId" parameterType="Integer" resultMap="courseResult">
+        select * from course where tId = #{tId}
+    </select>
+
+
+    <!--删除-->
+    <update id="delete" parameterType="Integer">
+        delete from course  where courseId=#{id}
+    </update>
+
+    <!--获取最大id-->
+    <select id="getMaxId" resultType="java.lang.Integer">
+        select max(courseId) from course
+     </select>
+
+
+    <!--&lt;!&ndash;查找某一个&ndash;&gt;-->
+    <!--<select id="findOne" parameterType="Integer" resultMap="studentResult">-->
+        <!--select s.*, c.classId, c.className from student s left join class c on s.classId = c.classId where sId=#{id}-->
+    <!--</select>-->
+
+    <!--总数-->
+    <select id="selectNums" resultType="java.lang.Integer">
+        select count(*) from course
+     </select>
+
+    <!--<select id="getTotal" resultType="Integer">-->
+       <!--select count(*) from  student-->
+    <!--</select>-->
+
+
+    <!--分页查找-->
+    <select id="selectList" parameterType="map" resultMap="courseResult">
+        select  c.*, t.tName from course c left join teacher t on c.tId = t.tId order by createTime desc limit #{currIndex} , #{pageSize}
+    </select>
+
+
+</mapper>

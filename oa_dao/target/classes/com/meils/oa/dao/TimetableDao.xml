@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper用于映射我们的Dao操作-->
+<mapper namespace="com.meils.oa.dao.TimetableDao">
+
+
+    <!--结果Map集-->
+    <resultMap id="timetableResult" type="Timetable">
+        <id property="cId" column="cId" javaType="Integer"/>
+        <result property="roomId" column="roomId" javaType="Integer"/>
+        <result property="lessonId" column="lessonId" javaType="Integer"/>
+        <result property="maxNum" column="maxNum" javaType="Integer"/>
+        <result property="weekNum" column="weekNum" javaType="Integer"/>
+        <result property="indexNum" column="indexNum" javaType="Integer"/>
+        <result property="remark" column="remark" javaType="String"/>
+        <result property="courseId" column="courseId" javaType="Integer"/>
+        <result property="createTime" column="createTime" javaType="String"/>
+        <association property="course" column="courseId" javaType="Course" >
+            <id property="courseId" column="courseId" javaType="Integer"/>
+            <result property="courseName" column="courseName" javaType="String"/>
+            <result property="courseNum" column="courseNum" javaType="String"/>
+            <result property="createTime" column="createTime" javaType="String"/>
+            <result property="courseProperty" column="courseProperty" javaType="String"/>
+            <result property="courseSort" column="courseSort" javaType="String"/>
+            <result property="examType" column="examType" javaType="String"/>
+            <result property="studyType" column="studyType" javaType="String"/>
+            <result property="weeklyTimes" column="weeklyTimes" javaType="String"/>
+            <result property="tId" column="tId" javaType="Integer"/>
+        </association>
+    </resultMap>
+
+
+    <!--添加一个-->
+    <insert id="insert" parameterType="Timetable">
+       insert into timetable (roomId,lessonId,maxNum, createTime,courseId) values(#{roomId},#{lessonId},#{maxNum}, #{createTime}, #{courseId})
+    </insert>
+
+
+    <!--更新-->
+    <update id="update" parameterType="Timetable">
+        update timetable set roomId = #{roomId},lessonId = #{lessonId},maxNum = #{maxNum}  where cId=#{cId}
+    </update>
+
+    <!--删除-->
+    <update id="delete" parameterType="Integer">
+        delete from timetable  where courseId=#{id}
+    </update>
+
+    <!--分页查找-->
+    <select id="selectList" parameterType="map" resultMap="timetableResult">
+        select  t.cId,t.lessonId, t.maxNum, t.roomId ,c.* from timetable t  left join course c on t.courseId = c.courseId  order by createTime desc limit #{currIndex} , #{pageSize}
+    </select>
+
+    <!--获取课表列表-->
+    <select id="selectList1"  resultMap="timetableResult">
+        select cor.*, ls.weekNum, ls.indexNum, ls.remark from (select  t.cId,t.lessonId, t.maxNum, t.roomId ,c.* from timetable t
+        left join course c on t.courseId = c.courseId  ) cor left join lessons ls on cor.lessonId = ls.lessonId order by createTime desc
+    </select>
+
+    <!--获取某个学生的课表列表-->
+    <select id="selectList2"   resultMap="timetableResult">
+        select cor.*, ls.weekNum, ls.indexNum, ls.remark from (select  t.cId,t.lessonId, t.maxNum, t.roomId ,c.* from timetable t
+        left join course c on t.courseId = c.courseId  ) cor left join lessons ls on cor.lessonId = ls.lessonId
+         where cor.courseId in
+        <foreach collection="array" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+         order by createTime desc
+    </select>
+
+
+    <select id="selectNums" resultType="Integer">
+       select count(*) from  timetable
+    </select>
+
+
+    <!--查找某一个-->
+    <select id="findByCourse" parameterType="Integer" resultMap="timetableResult">
+        select * from timetable where courseId=#{id}
+    </select>
+
+
+
+</mapper>

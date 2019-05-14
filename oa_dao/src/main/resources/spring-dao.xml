@@ -1,0 +1,53 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--springmvc配置-->
+    <!--开启自动扫描-->
+    <context:component-scan base-package="com.meils.oa.dao"/>
+
+    <!--数据源配置-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <!--驱动类-->
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <!--数据库连接url-->
+        <property name="url" value="jdbc:mysql://localhost:3306/studentos?useUnicode=true&amp;characterEncoding=utf-8"/>
+        <!--用户名和密码-->
+        <property name="username" value="root"/>
+        <property name="password" value="zjj19970517"/>
+    </bean>
+
+    <!--配置session工厂-->
+    <bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="typeAliasesPackage" value="com.meils.oa.entity"/>
+    </bean>
+
+
+    <!---->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sessionFactory"/>
+        <property name="basePackage" value="com.meils.oa.dao"/>
+    </bean>
+
+
+    <!--&lt;!&ndash;spring事务管理器&ndash;&gt;-->
+    <!--<bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >-->
+        <!--&lt;!&ndash;注入连接池&ndash;&gt;-->
+        <!--<property name="dataSource" ref="dataSource" ></property>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash;配置事务管理模版，这里目的是简化事务管理&ndash;&gt;-->
+    <!--<bean name="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate" >-->
+        <!--&lt;!&ndash;注入事务管理器&ndash;&gt;-->
+        <!--<property name="transactionManager" ref="transactionManager" ></property>-->
+    <!--</bean>-->
+
+
+
+
+</beans>

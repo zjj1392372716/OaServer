@@ -1,0 +1,48 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--引入dao层的spring配置-->
+    <import resource="spring-dao.xml"/>
+
+    <!--打开自动扫描-->
+    <context:component-scan base-package="com.meils.oa.biz"/>
+    <aop:aspectj-autoproxy/>
+
+
+    <!--配置声明式事务-->
+    <bean id="transationManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--通知-->
+    <tx:advice id="txAdvice" transaction-manager="transationManager">
+        <!--指定那些方法过滤-->
+        <tx:attributes>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="find*" read-only="true"/>
+            <tx:method name="search*" read-only="true"/>
+            <!--上面的方法不需要事物-->
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <!--配置哪些需要过滤-->
+        <aop:pointcut id="txpc" expression="execution(* com.meils.oa.biz.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txpc"/>
+        <!--上下联系起来-->
+    </aop:config>
+    <!--配置声明式事务结束-->
+
+</beans>

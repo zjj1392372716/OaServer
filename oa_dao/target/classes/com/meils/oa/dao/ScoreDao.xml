@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper用于映射我们的Dao操作-->
+<mapper namespace="com.meils.oa.dao.ScoreDao">
+
+    <!--结果Map集-->
+    <resultMap id="scResult" type="Score">
+        <id property="gId" column="gId" javaType="Integer"/>
+        <result property="sId" column="sId" javaType="Integer"/>
+        <result property="courseId" column="courseId" javaType="Integer"/>
+        <result property="score" column="score" javaType="Integer"/>
+        <result property="courseName" column="courseName" javaType="String"/>
+        <result property="sName" column="sName" javaType="String"/>
+        <result property="sNum" column="sNum" javaType="String" />
+    </resultMap>
+
+
+    <!--查询选了某几个课程的学生的成绩列表-->
+    <select id="selectList"  parameterType="map" resultMap="scResult">
+        select temp1.*, c.courseName from
+        (select  temp.*, s.sName, sNum from
+        (select * from score where courseId in
+        <foreach collection="idList" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        )
+        temp LEFT JOIN student s on temp.sId = s.sId)
+        temp1 left join course c on temp1.courseId  = c.courseId limit #{currIndex} , #{pageSize}
+    </select>
+
+    <!--查询全部个数-->
+    <select id="selectNums"  parameterType="map" resultType="java.lang.Integer">
+        select count(*) from
+        (select  temp.*, s.sName, sNum from
+        (select * from score where courseId in
+        <foreach collection="idList" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        )
+        temp LEFT JOIN student s on temp.sId = s.sId)
+        temp1 left join course c on temp1.courseId  = c.courseId
+    </select>
+
+
+    <!--更新-->
+    <update id="update" parameterType="Score">
+        update score set score = #{score} where gId=#{gId}
+    </update>
+
+
+    <!--查询学生的成绩列表-->
+    <select id="selectList1"  parameterType="map" resultMap="scResult">
+        select temp.*, c.courseName  from
+        (select * from score where sId = #{sId})
+        temp left join course c on temp.courseId = c.courseId limit #{currIndex} , #{pageSize}
+    </select>
+
+    <!--查询学生的成绩列表的总数-->
+    <select id="selectNums1"  parameterType="map" resultType="java.lang.Integer">
+        select count(*) from
+        (select * from score where sId = #{sId})
+        temp left join course c on temp.courseId = c.courseId
+    </select>
+
+
+</mapper>

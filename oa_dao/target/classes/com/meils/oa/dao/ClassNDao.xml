@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper用于映射我们的Dao操作-->
+<mapper namespace="com.meils.oa.dao.ClassNDao">
+
+    <!--结果Map集-->
+    <resultMap id="classNResult" type="ClassN">
+        <id property="classId" column="classId" javaType="Integer"/>
+        <result property="className" column="className" javaType="String"/>
+        <result property="isDelete" column="isDelete" javaType="Integer"/>
+    </resultMap>
+
+    <!--添加一个-->
+    <insert id="insert" parameterType="ClassN">
+       insert into class (className) values(#{className})
+    </insert>
+
+    <!--更新-->
+    <update id="update" parameterType="ClassN">
+        update class set className=#{className} where classId=#{classId}
+    </update>
+
+    <!--更新状态-->
+    <update id="updateState" parameterType="ClassN">
+        update class set isDelete = #{isDelete} where classId=#{classId}
+    </update>
+
+
+    <!--查找某一个-->
+    <select id="findOne" parameterType="Integer" resultMap="classNResult">
+        select * from class where classId=#{id}
+    </select>
+
+    <!--总数-->
+    <select id="getTotal" resultMap="classNResult">
+        select count(*) as totalNum from class
+    </select>
+
+
+    <!--分页查找-->
+    <select id="selectList" parameterType="map" resultMap="classNResult">
+        select * from class limit #{currIndex} , #{pageSize}
+    </select>
+
+
+</mapper>

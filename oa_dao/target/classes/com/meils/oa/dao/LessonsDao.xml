@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--mapper用于映射我们的Dao操作-->
+<mapper namespace="com.meils.oa.dao.LessonsDao">
+
+    <!--结果Map集-->
+    <resultMap id="lessonsResult" type="Lessons">
+        <id property="lessonId" column="lessonId" javaType="Integer"/>
+        <result property="weekNum" column="weekNum" javaType="Integer"/>
+        <result property="indexNum" column="indexNum" javaType="Integer"/>
+        <result property="remark" column="remark" javaType="String"/>
+        <result property="isSelect" column="isSelect" javaType="Integer"/>
+    </resultMap>
+
+    <select id="selectList" resultMap="lessonsResult">
+        select * from lessons where isSelect = 0
+    </select>
+
+
+    <!--更新-->
+    <update id="updateSelect" parameterType="Lessons">
+        update lessons set isSelect = #{isSelect} where lessonId=#{lessonId}
+    </update>
+
+    <!--获取全部-->
+    <select id="getAll" resultMap="lessonsResult">
+        select * from lessons
+    </select>
+
+
+</mapper>

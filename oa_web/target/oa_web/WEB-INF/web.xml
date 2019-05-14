@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+  <filter>
+    <filter-name>encoding</filter-name>
+    <filter-class>com.meils.oa.global.EncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>utf-8</param-value>
+    </init-param>
+  </filter>
+
+
+  <!--所有请求经过编码过滤器-->
+  <filter-mapping>
+    <filter-name>encoding</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!--CORS 跨域资源访问-->
+     <filter>
+         <filter-name>CORS</filter-name>
+         <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
+         <init-param>
+             <param-name>cors.allowGenericHttpRequests</param-name>
+             <param-value>true</param-value>
+         </init-param>
+         <init-param>
+            <param-name>cors.allowOrigin</param-name>
+             <param-value>*</param-value>
+         </init-param>
+         <init-param>
+            <param-name>cors.allowSubdomains</param-name>
+             <param-value>false</param-value>
+         </init-param>
+         <init-param>
+             <param-name>cors.supportedMethods</param-name>
+             <param-value>GET, HEAD, POST, OPTIONS</param-value>
+         </init-param>
+         <init-param>
+             <param-name>cors.supportedHeaders</param-name>
+             <param-value>*</param-value>
+         </init-param>
+         <init-param>
+             <param-name>cors.exposedHeaders</param-name>
+             <param-value>Test-1, Test-2</param-value>
+         </init-param>
+         <init-param>
+             <param-name>cors.supportsCredentials</param-name>
+             <param-value>true</param-value>
+         </init-param>
+         <init-param>
+             <param-name>cors.maxAge</param-name>
+             <param-value>3600</param-value>
+         </init-param>
+     </filter>
+     <filter-mapping>
+         <filter-name>CORS</filter-name>
+         <url-pattern>/*</url-pattern>
+      </filter-mapping>
+
+
+
+  <!--因为我们配置了静态资源，交给了servlet管理，我们这里需要筛选一下，不能让这些静态资源文件也交给springMVC处理-->
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/assets/*</url-pattern>
+    <url-pattern>/js/*</url-pattern>
+    <url-pattern>/vendor/*</url-pattern>
+    <url-pattern>*.js</url-pattern>
+    <url-pattern>*.jpg</url-pattern>
+    <url-pattern>*.gif</url-pattern>
+    <url-pattern>*.png</url-pattern>
+    <url-pattern>*.css</url-pattern>
+  </servlet-mapping>
+
+
+  <!--springMVC启动配置-->
+  <servlet>
+    <servlet-name>SpringMVC</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:spring-web.xml</param-value>
+    </init-param>
+    <init-param>
+               <param-name>dispatchOptionsRequest</param-name>
+                <param-value>true</param-value>
+           </init-param>
+    <!--项目启动之后加载servlet-->
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SpringMVC</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+
+
+
+</web-app>
